@@ -1,46 +1,44 @@
-def calculate_distance(left_list, right_list):
-    # list sorter
-    left_sorted = sorted(left_list)
-    right_sorted = sorted(right_list)
-    # list sorter job check
-    if len(left_sorted) != len(right_sorted):
-        print("The lists must be of the same length.")
-        return None
+def calculate_distance(column_lists):
+    # Check if all columns are of the same length
+    length = len(column_lists[0])
 
-    # distance mesurer starts here!!!
-    total_distance = 0
-    # paring + take away function distance resuly
-    for i in range(len(left_sorted)):
-        distance = abs(left_sorted[i] - right_sorted[i])
-        total_distance += distance
-        # dialogue for check
-        print(f"Pairing: ({left_sorted[i]}, {right_sorted[i]}) -> Distance: {distance}")
+    # List sorter
+    sorted_columns = [sorted(column) for column in column_lists]
 
-    return total_distance
+    # Distance measure starts here!!!
+    total_distances = [0] * (len(sorted_columns) - 1)
 
-# read file + split definition
+    # Calculate distances for each pair
+    for i in range(length):  # iterate through rows
+        for j in range(1, len(sorted_columns)):  # compare with all other columns
+            distance = abs(sorted_columns[0][i] - sorted_columns[j][i])
+            total_distances[j - 1] += distance
+            # Dialogue for check
+            print(f"Pairing: ({sorted_columns[0][i]}, {sorted_columns[j][i]}) -> Distance: {distance}")
+
+    return total_distances
+
+# Read file + split definition
 def read_file_and_split(filename):
-    left_list = []
-    right_list = []
+    column_lists = []
     
     with open(filename, 'r') as file:
         for line in file:
-            # split to 2 numbers + add to dict
-            left, right = map(int, line.split())
-            left_list.append(left)
-            right_list.append(right)
+            # Split into numbers, convert to integers, and store in column_lists
+            numbers = list(map(int, line.split()))
+            # Extend the column lists to accommodate new entries
+            if not column_lists:
+                column_lists = [[] for _ in range(len(numbers))]
+            for idx, number in enumerate(numbers):
+                column_lists[idx].append(number)
 
-    return left_list, right_list
+    return column_lists
 
-# file name input here!!!
-filename = 'problem_1/input.txt'  # this is where you input stuff REMEMBER future Vitaly!!!!!!
+# File name input here!!!
+filename = 'input-1.txt'  # this is where you input stuff REMEMBER future Vitaly!!!!!!
 
 # Read + split call!!!
-left_list, right_list = read_file_and_split(filename)
+column_lists = read_file_and_split(filename)
 
-# total distance
-total_distance = calculate_distance(left_list, right_list)
-
-# Answer is printed:
-if total_distance is not None:
-    print(f"Total distance between paired numbers: {total_distance}")
+# Total distance
+total_distances = calculate_distance(column_lists)
