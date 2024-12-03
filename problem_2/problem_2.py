@@ -1,41 +1,45 @@
-def calculate_distance(column_lists):
-    # list sorter
-    sorted_columns = [sorted(column) for column in column_lists]
+def is_report_safe(report):
+    # Check the differences between consecutive levels
+    for i in range(1, len(report)):
+        difference = report[i] - report[i - 1]
+        # Unsafe conditions
+        if difference > 2 or difference < -2 or difference == 0:
+            return False
+    return True
 
-    # distance mesurer starts here!!!
-    total_distances = [0] * (len(sorted_columns) - 1)
 
-    # Calculate distances for each pair
-    for i in range(len(sorted_columns[0])):  # iterate through rows
-        for j in range(1, len(sorted_columns)):  # compare with all other columns
-            distance = abs(sorted_columns[0][i] - sorted_columns[j][i])
-            total_distances[j - 1] += distance
-            # dialogue for check
-            print(f"Pairing: ({sorted_columns[0][i]}, {sorted_columns[j][i]}) -> Distance: {distance}")
+def calculate_safe_reports(column_lists):
+    safe_count = 0
+    
+    # Check each report
+    for report in column_lists:
+        if is_report_safe(report):
+            safe_count += 1
+            print(f"Report {report} is Safe")
+        else:
+            print(f"Report {report} is Unsafe")
+    
+    return safe_count
 
-    return total_distances
-
-# read file + split definition
+# Read file + split definition
 def read_file_and_split(filename):
     column_lists = []
     
     with open(filename, 'r') as file:
         for line in file:
-            # split into numbers, convert to integers, and store in column_lists
+            # Split into numbers, convert to integers, and store in column_lists
             numbers = list(map(int, line.split()))
-            # Extend the column lists to accommodate new entries
-            if not column_lists:
-                column_lists = [[] for _ in range(len(numbers))]
-            for idx, number in enumerate(numbers):
-                column_lists[idx].append(number)
+            column_lists.append(numbers)  # Append the entire report as a list
 
     return column_lists
 
-# file name input here!!!
-filename = 'input-1.txt'  # this is where you input stuff REMEMBER future Vitaly!!!!!!
+# File name input here
+filename = 'problem_2/input-1.txt'  # Specify the input file path here
 
-# Read + split call!!!
+# Read + split call
 column_lists = read_file_and_split(filename)
 
-# total distance
-total_distances = calculate_distance(column_lists)
+# Total safe reports
+total_safe_reports = calculate_safe_reports(column_lists)
+
+print(f"Total Safe Reports: {total_safe_reports}")
