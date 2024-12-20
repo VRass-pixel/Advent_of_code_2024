@@ -105,4 +105,4 @@ if __name__ == '__main__':
 
     file = 'problem_4/input_4.txt'
     part_b_sol = part_b(file)
-    print('Part B: {part_b_sol}')
+    print(f'Part B: {part_b_sol}')
