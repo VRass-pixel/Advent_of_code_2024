@@ -1,3 +1,4 @@
+import time
 import copy
 from functools import lru_cache
 
@@ -196,10 +197,18 @@ def part_b(file: str)  -> int:
 
 if __name__ == '__main__':
 
-    file = 'problem_17/input_17.txt'
+    file = 'problem_17/example_2.txt'
 
+    init_t = time.perf_counter()
     part_a_sol = part_a(file)
-    print(f'Part A: {part_a_sol}')
+    end_t = time.perf_counter()
+    elapsed = end_t - init_t
+    print(f'\033[32mPart A: {part_a_sol}')
+    print(f'Part A: {elapsed * 1e3:.2f} ms\033[0m')
 
+    init_t = time.perf_counter()
     part_b_sol = part_b(file)
-    print(f'Part B: {part_b_sol}')
+    end_t = time.perf_counter()
+    elapsed = end_t - init_t
+    print(f'\033[34mPart B: {part_b_sol}')
+    print(f'Part B: {elapsed * 1e3:.2f} ms\033[0m')
