@@ -1,4 +1,3 @@
-import time
 import re
 
 
@@ -38,9 +37,5 @@ def part_b(file: str) -> int:
 if __name__ == '__main__':
 
     file = 'problem_3/input_3.txt'
-
-    init_t = time.perf_counter()
     part_b_sol = part_b(file)
-    end_t = time.perf_counter()
-    elapsed = end_t - init_t
-    print(f'\033[34mPart B: {part_b_sol}')
+    print(f'Part B: {part_b_sol}')
