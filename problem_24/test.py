@@ -42,13 +42,12 @@ for line in part2:
                .replace('XOR', 'np.bitwise_xor') \
                .replace('OR', 'np.bitwise_or')
 
-    # Replace '->' with '==' for assignment
-    line = line.replace('->', '==')
+    # Replace assignment (->) with a placeholder for evaluation
+    line = line.replace('->', '=')
 
-    # Split the line by '==' to extract LHS and RHS
-    parts = line.split('==')
+    # Split the line at '=' to extract LHS and RHS
+    parts = line.split('=')
     
-    # If the line does not contain exactly one '==', print an error or skip it
     if len(parts) != 2:
         print(f"Skipping invalid line: {line}")
         continue
@@ -63,10 +62,8 @@ for line in part2:
 # Function to solve all equations iteratively using numpy
 def solve_equations(gates, variables):
     solved_values = variables.copy()  # Start with initial variables
-    unsolved = set([rhs_var for _, rhs_var in gates])  # Set of variables we need to solve
-    processing = set()  # Set to track variables currently being processed
+    unsolved = set(rhs_var for _, rhs_var in gates)  # Set of variables we need to solve
     iteration_count = 0  # To limit infinite retries
-    progress_made = False  # Flag to track if any new variables are being solved
 
     while unsolved:
         iteration_count += 1
@@ -87,40 +84,24 @@ def solve_equations(gates, variables):
 
             # Check if all variables in lhs_expr are known
             if all(var in solved_values for var in lhs_vars):
-                if rhs_var in processing:
-                    # Circular dependency detected
-                    print(f"Circular dependency detected while processing {rhs_var}. Skipping.")
-                    continue  # Skip this equation for now and retry later
-                
                 try:
-                    # Add the current rhs_var to processing set (mark as being processed)
-                    processing.add(rhs_var)
-                    
                     # Evaluate the expression on the left-hand side (LHS)
                     lhs_result = eval(lhs_expr, {}, solved_values)  # Use current known values
 
                     # Store the result and mark as solved
                     solved_values[rhs_var] = lhs_result
                     unsolved.remove(rhs_var)
-                    processing.remove(rhs_var)  # Done processing, remove from the set
                     progress = True  # Progress made in solving the equations
 
-                    # Track progress
-                    progress_made = True
                     print(f"Assigned: {rhs_var} = {lhs_result}")
 
                 except Exception as e:
                     print(f"Error evaluating {lhs_expr}: {e}")
 
-        # If no progress was made, retry in the next iteration
+        # If no progress was made, possibly print a message or break
         if not progress:
-            if progress_made:
-                print("Progress made in this iteration, retrying with updated known values.")
-            else:
-                print("Unable to make progress, retrying with current known values.")
-            # Implementing a delay would help mitigate infinite retries
-            import time
-            time.sleep(1)  # Wait 1 second before retrying (can adjust this delay)
+            print("Unable to make progress, potentially stuck on dependencies.")
+            break
 
     return solved_values
 
@@ -133,7 +114,6 @@ for var, value in final_values.items():
     print(f"{var} = {value}")
 
 # Binary --> Decimal Conversion
-# After solving the equations, we will now convert the binary results (e.g., z variables) into decimal numbers.
 binary_number = "".join(str(final_values.get(f'z{i:02}', 0)) for i in range(13))  # Assuming 13 z variables
 decimal_number = int(binary_number, 2)
 
